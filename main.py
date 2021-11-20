@@ -9,6 +9,8 @@ from utils import *
 
 if __name__ == "__main__":
 	# infile = "kidney_disease.csv"
+    # feature_list = ['age', 'bp', 'sg', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc', 'rc', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+
 	infile = "data_banknote_authentication.txt"
 	feature_list = ["variance","skewness","curtosis","entropy"]
 
