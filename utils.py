@@ -111,7 +111,7 @@ def split_data(infile, feature_list, batch_size=32):
 	valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size,shuffle=False)
 	test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size,shuffle=False)
 
-	return train_loader, valid_loader, test_loader
+	return train_dataset, valid_dataset, test_dataset, train_loader, valid_loader, test_loader
 
 
 
