@@ -20,7 +20,7 @@ def category2numerical(df):
     df[cat_columns] = df[cat_columns].apply(lambda x: x.cat.codes)
     return df 
 
-def normalize_data(df):
+def normalize_dataframe(df):
     '''
     Normalize the data. This is often applied with kidney dataset.
     '''
@@ -32,6 +32,15 @@ def normalize_data(df):
     minmax = MinMaxScaler()
     df[num_features] = minmax.fit_transform(df[num_features].values)
     return df
+
+def normalize_data(X):
+    '''
+    Normalize the data. This is often applied with kidney dataset.
+    '''
+    # Scaling numerical features
+    minmax = MinMaxScaler()
+    X = minmax.fit_transform(X)
+    return X, minmax
 
 def clean_data(infile):
 	"""
@@ -88,7 +97,7 @@ def clean_data(infile):
 		df['dm'] = df['dm'].astype("category")
 
         # Preprocess
-		df = normalize_data(df)
+# 		df = normalize_data(df)
 		df = category2numerical(df)
 
 		return df

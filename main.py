@@ -24,14 +24,20 @@ if __name__ == "__main__":
     for data, label in test_dataset:
         X_test.append(parsing_data(data))
         Y_test.append(label)
-    # Convert to numpy array
-    X_train = np.array(X_train)
+        
+    # Convert to numpy array and normalize with MinmaxScaler
+    # This is needed for kidney dataset
+    X_train, minmax = normalize_data(np.array(X_train))
     Y_train = np.array(Y_train)
-    X_test = np.array(X_test)
+    
+    # With the test data, we reuse again the normalized minmax model used on training data
+    X_test = minmax.transform(np.array(X_test))
     Y_test = np.array(Y_test)
+    
     # Train SVM model with train data
-    clf = svm.SVC(kernel = "rbf", C = 3, gamma = 0.3)
+    clf = svm.SVC(kernel = "rbf", C = 3, gamma = 0.5)
     clf.fit(X_train, Y_train)
+    
     # Test trained svm model and print accuracy
     error = clf.predict(X_test) - Y_test
     accuracy = len(error[error == 0])/len(error)
