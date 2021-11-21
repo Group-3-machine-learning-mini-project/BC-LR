@@ -31,8 +31,10 @@ def clean_data(infile):
 		df = df.drop(columns="id")
 
 		# Handle "	?" values
-		nodataval = "\t?"
+		nodataval = "?"
 		df = df.replace(nodataval, np.nan)
+    df = df.str.replace('\t',"")
+    df = df.str.replace(' ',"")
 
 		# Convert false string columns
 		other_numeric_columns = ["pcv", "wc", "rc"]
@@ -55,10 +57,16 @@ def clean_data(infile):
 		assert set(fillna_mean_cols.union(fillna_most_cols)) == set(df.columns)
 		df[fillna_mean_cols] = df[fillna_mean_cols].fillna(df[fillna_mean_cols].mean())
 		df[fillna_most_cols] = df[fillna_most_cols].fillna(df[fillna_most_cols].mode().iloc[0])
+    
 		return df
 
 	else:
 		print("This is not the dataset we were to deal with. Please check its name to make sure it matches one of these two:\n", "data_banknote_authentication.txt\n", "kidney_disease.csv\n")
+
+def category2numerical(df):
+  cat_columns = df.select_dtypes(['category']).columns
+  df[cat_columns] = df[cat_columns].apply(lambda x: x.cat.codes)
+  return df 
 
 # Define dataset
 class binary_classification_dataset(torch.utils.data.Dataset):
@@ -107,11 +115,43 @@ def split_data(infile, feature_list, batch_size=32):
 	train_dataset, valid_dataset = torch.utils.data.random_split(dataset=left_dataset,lengths=[len(left_dataset)-valiset_length, valiset_length])
 
 	# Load dataset as dataloader 
-	train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,shuffle=True)
-	valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size,shuffle=False)
-	test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size,shuffle=False)
+	train_loader = torch.utils.data.DataLoader(train_dataset, shuffle=True)
+	valid_loader = torch.utils.data.DataLoader(valid_dataset, shuffle=False)
+	test_loader = torch.utils.data.DataLoader(test_dataset, shuffle=False)
 
 	return train_dataset, valid_dataset, test_dataset, train_loader, valid_loader, test_loader
+
+def split_data_numpy(df_file, feature_list):
+  """
+  This function outputs numpy format
+  Split between training set and test set
+  Split the training set for cross-validation
+  Inputs: 
+    - df: 	
+      type of pandas.core.frame.DataFrame
+      cleaned data of Banknote Authentication Dataset or Chronic Kidney Disease
+
+  Outputs:
+    - train data:
+    - valid data:
+    - test data : 
+  """
+  dataset = df_file.to_numpy()
+  # split ratio for training, testing and validation dataset
+  testset_ratio = 0.2
+  valiset_ratio = 0.1
+  testset_length = int((dataset.shape[0])*testset_ratio)
+  valiset_length = int((dataset.shape[0])*valiset_ratio)
+  trainset_length = dataset.shape[0] - testset_length - valiset_length
+
+  # Random shuffle dataset
+  np.random.shuffle(dataset)
+  # Split dataset
+  X_train = dataset[:trainset_length, :-1]
+  X_test = dataset[trainset_length:trainset_length + testset_length, :-1]
+  Y_train = dataset[:trainset_length, -1]
+  Y_test = dataset[trainset_length:trainset_length + testset_length, -1]
+  return X_train, Y_train, X_test, Y_test
 
 
 
