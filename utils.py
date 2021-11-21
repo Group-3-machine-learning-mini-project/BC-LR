@@ -7,7 +7,6 @@ Created on Fri Nov 19 22:31:39 2021
 
 import os
 import pandas as pd
-from pandas_profiling import ProfileReport
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
