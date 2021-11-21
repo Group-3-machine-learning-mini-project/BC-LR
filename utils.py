@@ -33,8 +33,8 @@ def clean_data(infile):
 		# Handle "	?" values
 		nodataval = "?"
 		df = df.replace(nodataval, np.nan)
-    df = df.str.replace('\t',"")
-    df = df.str.replace(' ',"")
+    # df = df.str.replace('\t',"")
+    # df = df.str.replace(' ',"")
 
 		# Convert false string columns
 		other_numeric_columns = ["pcv", "wc", "rc"]
@@ -57,6 +57,11 @@ def clean_data(infile):
 		assert set(fillna_mean_cols.union(fillna_most_cols)) == set(df.columns)
 		df[fillna_mean_cols] = df[fillna_mean_cols].fillna(df[fillna_mean_cols].mean())
 		df[fillna_most_cols] = df[fillna_most_cols].fillna(df[fillna_most_cols].mode().iloc[0])
+
+		# Further cleaning
+		df['classification'] = df['classification'].replace(to_replace={"ckd\t":"ckd","\tckd":"ckd"})
+		df['cad'] = df['cad'].replace("\tno","no")
+		df['dm'] = df['dm'].replace(to_replace={"\tno":"no","\tyes":"yes"," yes":"yes"})
     
 		return df
 
