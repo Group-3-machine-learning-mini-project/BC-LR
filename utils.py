@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 19 22:31:39 2021
+This is the script containing necessary functions for this mini-project
 
-@author: Laptop MSI
+@author: Minh-Triet, Ganglin, Binh Minh
 """
 
 import os
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import PCA
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -33,7 +34,7 @@ def normalize_dataframe(df):
     df[num_features] = minmax.fit_transform(df[num_features].values)
     return df
 
-def normalize_data(X):
+def normalize_data(X, normalization = True):
     '''
     Normalize the data. This is often applied with kidney dataset.
     '''
@@ -63,6 +64,10 @@ def clean_data(infile):
 		# Handle "	?" values
 		nodataval = "\t?"
 		df = df.replace(nodataval, np.nan)
+        # Some cleaning steps must be done manually.
+		df['classification'] = df['classification'].replace(to_replace={"ckd\t":"ckd","\tckd":"ckd"})
+		df['cad'] = df['cad'].replace("\tno","no")
+		df['dm'] = df['dm'].replace(to_replace={"\tno":"no","\tyes":"yes"," yes":"yes"})
         # df = df.str.replace('\t',"")
         # df = df.str.replace(' ',"")
 
@@ -88,16 +93,7 @@ def clean_data(infile):
 		df[fillna_mean_cols] = df[fillna_mean_cols].fillna(df[fillna_mean_cols].mean())
 		df[fillna_most_cols] = df[fillna_most_cols].fillna(df[fillna_most_cols].mode().iloc[0])
 
-		# Further cleaning
-		df['classification'] = df['classification'].replace(to_replace={"ckd\t":"ckd","\tckd":"ckd"})
-		df['classification'] = df['classification'].astype("category")
-		df['cad'] = df['cad'].replace("\tno","no")
-		df['cad'] = df['cad'].astype("category")
-		df['dm'] = df['dm'].replace(to_replace={"\tno":"no","\tyes":"yes"," yes":"yes"})
-		df['dm'] = df['dm'].astype("category")
-
-        # Preprocess
-# 		df = normalize_data(df)
+        # Preprocess: convert category to numerical values
 		df = category2numerical(df)
 
 		return df
@@ -143,8 +139,8 @@ def split_data(infile, feature_list, batch_size=32):
 	"""
 	dataset = binary_classification_dataset(infile, feature_list)
 	# split ratio for training, testing and validation dataset
-	testset_ratio = 0.2
-	valiset_ratio = 0.1
+	testset_ratio = 0.3
+	valiset_ratio = 0.0
 	testset_length = int(len(dataset)*testset_ratio)
 	valiset_length = int(len(dataset)*valiset_ratio)
 
@@ -168,38 +164,38 @@ def parsing_data(data):
       new_data.append(data[key])
     return new_data
 
+def train_data(model, X_train, Y_train, pca = False, n_components = 4):
+    '''
+    Train data with pca option for dimension reduction
+    '''
+    if pca:
+        if n_components > X_train.shape[1]:
+            raise ("The number of components should be small than the number of features.")
+            
+        pca_model = PCA(n_components = n_components)
+        X_train_reduced = pca_model.fit_transform(X_train)
+        model.fit(X_train_reduced, Y_train) 
+        return model, pca_model
+    else:
+        model.fit(X_train, Y_train)
+        return model, None
+    
+def test_data(model, X_test, Y_test, pca = True, pca_model = None):
+    '''
+    Test data with pca option for dimension reduction
+    '''
+    if pca:
+        # Test trained svm model and print accuracy
+        error = model.predict(pca_model.transform(X_test)) - Y_test
+        accuracy = len(error[error == 0])/len(error)
+        print("Accuracy of the SVM model with PCA: ",accuracy)
 
-# def split_data_numpy(df_file, feature_list):
-#   """
-#   This function outputs numpy format
-#   Split between training set and test set
-#   Split the training set for cross-validation
-#   Inputs: 
-#     - df: 	
-#       type of pandas.core.frame.DataFrame
-#       cleaned data of Banknote Authentication Dataset or Chronic Kidney Disease
+    else:
+        # Test trained svm model and print accuracy
+        error = model.predict(X_test) - Y_test
+        accuracy = len(error[error == 0])/len(error)
+        print("Accuracy of the SVM model: ",accuracy)
 
-#   Outputs:
-#     - train data:
-#     - valid data:
-#     - test data : 
-#   """
-#   dataset = df_file.to_numpy()
-#   # split ratio for training, testing and validation dataset
-#   testset_ratio = 0.2
-#   valiset_ratio = 0.1
-#   testset_length = int((dataset.shape[0])*testset_ratio)
-#   valiset_length = int((dataset.shape[0])*valiset_ratio)
-#   trainset_length = dataset.shape[0] - testset_length - valiset_length
-
-#   # Random shuffle dataset
-#   np.random.shuffle(dataset)
-#   # Split dataset
-#   X_train = dataset[:trainset_length, :-1]
-#   X_test = dataset[trainset_length:trainset_length + testset_length, :-1]
-#   Y_train = dataset[:trainset_length, -1]
-#   Y_test = dataset[trainset_length:trainset_length + testset_length, -1]
-#   return X_train, Y_train, X_test, Y_test
 
 
 
