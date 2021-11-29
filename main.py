@@ -41,14 +41,20 @@ if __name__ == "__main__":
     else:
         X_train = np.array(X_train)
         X_test = np.array(X_test)
-        
+    
+    # Convert data to numpy array
     Y_train = np.array(Y_train)
     Y_test = np.array(Y_test)
-  
+    
+    # Initilize SVM model
+    clf = svm.SVC(kernel = "rbf", C = 50, gamma = 0.5)
+    
+    # Applying cross validation to find the best parameters
+    cross_validation(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2)
+    
     # Train SVM model with train_data function. Depending on the pca trigger,
     # pca_model can contain fitted paramenters or None type.
-    clf = svm.SVC(kernel = "rbf", C = 3, gamma = 0.5)
     clf, pca_model = train_data(clf, X_train, Y_train, pca = pca_flag, n_components = 2)
-    
+
     # Test trained svm model and print the classification report
     test_data(clf, X_test, Y_test, pca = pca_flag, pca_model = pca_model)

@@ -10,6 +10,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import cross_val_score
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -134,14 +135,14 @@ def split_data(infile, feature_list, batch_size=32):
 			batch size for dataloader
 
 	Outputs:
-		- train_loader:
-		- valid_loader:
-		- test_loader : 
+		- train_dataset
+		- valid_dataset
+		- test_dataset :
 	"""
 	dataset = binary_classification_dataset(infile, feature_list)
 	# split ratio for training, testing and validation dataset
 	testset_ratio = 0.3
-	valiset_ratio = 0.0
+	valiset_ratio = 0.0 # Here we do not create the validation set so we set as 0
 	testset_length = int(len(dataset)*testset_ratio)
 	valiset_length = int(len(dataset)*valiset_ratio)
 
@@ -186,10 +187,13 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
     Test data with pca option for dimension reduction
     '''
     target_names = ['class 0', 'class 1']
+    
+    print("Testing result: ")
+    print("Confusion matrix:")
+    print("[[TP,FN], \n[FP, TN]] \n")
     if pca:
         # Test trained svm model and print the report    
-        print("Confusion matrix:")
-        print("[[TP,FN], \n[FP, TN]] \n")
+        
         print(confusion_matrix(Y_test, model.predict(pca_model.transform(X_test))))
         print("\n")
         print("Classification report: \n")
@@ -198,10 +202,33 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
 
     else:
         # Test trained svm model and print the report 
-        print("Confusion matrix:")
-        print("[[TP,FN], \n[FP, TN]] \n")
         print(confusion_matrix(Y_test, model.predict(X_test)))
         print("\n")
         print("Classification report: \n")
         print(classification_report(Y_test, model.predict(X_test), 
                                     target_names=target_names))
+        
+def cross_validation(model, X, Y, n_splits = 4, pca = True, n_components = 2):
+    
+    '''
+    Cross validation. The main parameter is n_splits, which indicates
+    how many folds we want to divide our dataset into.
+    '''
+    print("Cross validation result with {} folds:".format(n_splits))
+    if pca:
+        # Transform data with pca and feed into the model  
+        pca_model = PCA(n_components = n_components)
+        data = pca_model.fit_transform(X)
+        scores = cross_val_score(model, data, Y, cv=n_splits)
+        print("Scores: ", scores)
+        print("%0.2f accuracy with a standard deviation of %0.3f" % (scores.mean(), scores.std()))
+
+
+    else:
+        # Test trained svm model and print the report 
+        scores = cross_val_score(model, X, Y, cv=n_splits)
+        print("Scores: ", scores)
+        print("%0.2f accuracy with a standard deviation of %0.3f" % (scores.mean(), scores.std()))
+        
+    print("\n")
+    
