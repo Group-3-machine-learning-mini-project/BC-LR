@@ -169,6 +169,7 @@ def parsing_data(data):
 def read_dataset(train_dataset, valid_dataset, test_dataset):
     '''
     Read data from dataset
+    So far we do not work with valid_dataset so we ignore it
     '''
     # Read dataset
     X_train, Y_train, X_test, Y_test = [], [], [], []
