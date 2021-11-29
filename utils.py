@@ -229,7 +229,7 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
         print(classification_report(Y_test, model.predict(X_test), 
                                     target_names=target_names))
         
-def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2):
+def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2, dataname = "banknote"):
     
     '''
     Model selection with grid search
@@ -249,8 +249,9 @@ def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2
     else:
         gr = GridSearchCV(base_model, param_grid, cv=n_splits).fit(X, Y)
     
+    # Save the result of grid search
     df = pd.DataFrame.from_dict(gr.cv_results_)
-    df.to_csv("Result of grid search.csv", index=False)
+    df.to_csv("Result of grid search_" + dataname + ".csv", index=False)
     print("Grid search result: ") 
     print(df) 
     print("The best model is: ")   

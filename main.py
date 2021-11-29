@@ -39,7 +39,7 @@ if __name__ == "__main__":
     clf = svm.SVC(kernel = "rbf", C = 150, gamma = 0.5)
     
     # Applying grid search to find the best parameters
-    best_clf = model_selection(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2)
+    best_clf = model_selection(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2, dataname = infile)
 
     # Train SVM model with train_data function. Depending on the pca trigger,
     # pca_model can contain fitted paramenters or None type.
