@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, GridSearchCV
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -170,7 +170,7 @@ def read_dataset(train_dataset, valid_dataset, test_dataset):
     '''
     Read data from dataset
     '''
-    # Read dataloader
+    # Read dataset
     X_train, Y_train, X_test, Y_test = [], [], [], []
     for data, label in train_dataset:
         X_train.append(parsing_data(data))
@@ -229,27 +229,33 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
         print(classification_report(Y_test, model.predict(X_test), 
                                     target_names=target_names))
         
-def cross_validation(model, X, Y, n_splits = 4, pca = True, n_components = 2):
+def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2):
     
     '''
-    Cross validation. The main parameter is n_splits, which indicates
-    how many folds we want to divide our dataset into.
+    Model selection with grid search
     '''
-    print("Cross validation result with {} folds:".format(n_splits))
+    
+    param_grid = [{'C': [1, 10, 100, 1000], 'kernel': ['linear']},
+                  {'C': [1, 10, 100, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001], 'kernel': ['rbf']},
+                 ]
+    
     if pca:
         # Transform data with pca and feed into the model  
         pca_model = PCA(n_components = n_components)
-        data = pca_model.fit_transform(X)
-        scores = cross_val_score(model, data, Y, cv=n_splits)
-        print("Scores: ", scores)
-        print("%0.2f accuracy with a standard deviation of %0.3f" % (scores.mean(), scores.std()))
-
+        data = pca_model.fit_transform(X)       
+        gr = GridSearchCV(base_model, param_grid, cv=n_splits).fit(data, Y)
+        
 
     else:
-        # Test trained svm model and print the report 
-        scores = cross_val_score(model, X, Y, cv=n_splits)
-        print("Scores: ", scores)
-        print("%0.2f accuracy with a standard deviation of %0.3f" % (scores.mean(), scores.std()))
-        
+        gr = GridSearchCV(base_model, param_grid, cv=n_splits).fit(X, Y)
+    
+    df = pd.DataFrame.from_dict(gr.cv_results_)
+    df.to_csv("Result of grid search.csv", index=False)
+    print("Grid search result: ") 
+    print(df) 
+    print("The best model is: ")   
+    print(gr.best_estimator_)
     print("\n")
+    
+    return gr.best_estimator_
     

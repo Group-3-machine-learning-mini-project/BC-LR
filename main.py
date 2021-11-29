@@ -28,8 +28,8 @@ if __name__ == "__main__":
     
     # If the normalization trigger is on.
     if normalization:
-        # Convert to numpy array and normalize with MinmaxScaler
-        # This is needed for kidney dataset
+        # Normalize with MinmaxScaler
+        # This is essential for kidney dataset
         X_train, normalizer = normalize_data(X_train)
     
         # With the test data, we reuse again the normalized minmax model used on training data    
@@ -38,12 +38,12 @@ if __name__ == "__main__":
     # Initilize SVM model
     clf = svm.SVC(kernel = "rbf", C = 150, gamma = 0.5)
     
-    # Applying cross validation to find the best parameters
-    cross_validation(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2)
-    
+    # Applying grid search to find the best parameters
+    best_clf = model_selection(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2)
+
     # Train SVM model with train_data function. Depending on the pca trigger,
     # pca_model can contain fitted paramenters or None type.
-    clf, pca_model = train_data(clf, X_train, Y_train, pca = pca_flag, n_components = 2)
+    best_clf, pca_model = train_data(best_clf, X_train, Y_train, pca = pca_flag, n_components = 2)
 
     # Test trained svm model and print the classification report
-    test_data(clf, X_test, Y_test, pca = pca_flag, pca_model = pca_model)
+    test_data(best_clf, X_test, Y_test, pca = pca_flag, pca_model = pca_model)
