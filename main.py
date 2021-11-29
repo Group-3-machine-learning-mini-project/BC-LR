@@ -19,35 +19,24 @@ if __name__ == "__main__":
     
     # Loading dataset. The train_loader, valid_loader, test_loader are avaialble
     # in case we want to adapt a neural-network based solution with pytorch framwork.
+    # We also include the CLEAN step in this function
+    # The detail of CLEAN step can be found in utils.py file
     train_dataset, valid_dataset, test_dataset, train_loader, valid_loader, test_loader = split_data(infile, feature_list)
 	
-    # Read dataloader
-    X_train, Y_train, X_test, Y_test = [], [], [], []
-    for data, label in train_dataset:
-        X_train.append(parsing_data(data))
-        Y_train.append(label)
-    for data, label in test_dataset:
-        X_test.append(parsing_data(data))
-        Y_test.append(label)
-        
+    # Read data
+    X_train, Y_train, X_test, Y_test = read_dataset(train_dataset, valid_dataset, test_dataset)
+    
     # If the normalization trigger is on.
     if normalization:
         # Convert to numpy array and normalize with MinmaxScaler
         # This is needed for kidney dataset
-        X_train, normalizer = normalize_data(np.array(X_train))
+        X_train, normalizer = normalize_data(X_train)
     
         # With the test data, we reuse again the normalized minmax model used on training data    
-        X_test = normalizer.transform(np.array(X_test))      
-    else:
-        X_train = np.array(X_train)
-        X_test = np.array(X_test)
-    
-    # Convert data to numpy array
-    Y_train = np.array(Y_train)
-    Y_test = np.array(Y_test)
-    
+        X_test = normalizer.transform(X_test)      
+
     # Initilize SVM model
-    clf = svm.SVC(kernel = "rbf", C = 50, gamma = 0.5)
+    clf = svm.SVC(kernel = "rbf", C = 150, gamma = 0.5)
     
     # Applying cross validation to find the best parameters
     cross_validation(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2)

@@ -166,6 +166,27 @@ def parsing_data(data):
       new_data.append(data[key])
     return new_data
 
+def read_dataset(train_dataset, valid_dataset, test_dataset):
+    '''
+    Read data from dataset
+    '''
+    # Read dataloader
+    X_train, Y_train, X_test, Y_test = [], [], [], []
+    for data, label in train_dataset:
+        X_train.append(parsing_data(data))
+        Y_train.append(label)
+    for data, label in test_dataset:
+        X_test.append(parsing_data(data))
+        Y_test.append(label)
+    
+    # Convert to numpy array
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+    Y_train = np.array(Y_train)
+    Y_test = np.array(Y_test)
+    
+    return X_train, Y_train, X_test, Y_test
+
 def train_data(model, X_train, Y_train, pca = False, n_components = 4):
     '''
     Train data with pca option for dimension reduction
