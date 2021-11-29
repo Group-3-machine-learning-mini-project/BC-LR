@@ -8,16 +8,17 @@ from utils import *
 
 
 if __name__ == "__main__":
-    # infile = "kidney_disease.csv"
-    # feature_list = ['age', 'bp', 'sg', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 
-    #                 'pcv', 'wc', 'rc', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+    infile = "kidney_disease.csv"
+    feature_list = ['age', 'bp', 'sg', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 
+                    'pcv', 'wc', 'rc', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
     pca_flag = 0 # the trigger for using pca
-    normalization = 0
-    infile = "data_banknote_authentication.txt"
-    feature_list = ["variance","skewness","curtosis","entropy"]
+    normalization = 1
+    
+    # infile = "data_banknote_authentication.txt"
+    # feature_list = ["variance","skewness","curtosis","entropy"]
     
     # Loading dataset. The train_loader, valid_loader, test_loader are avaialble
-    # In case we want to adapt a neural-network based solution with pytorch framwork.
+    # in case we want to adapt a neural-network based solution with pytorch framwork.
     train_dataset, valid_dataset, test_dataset, train_loader, valid_loader, test_loader = split_data(infile, feature_list)
 	
     # Read dataloader

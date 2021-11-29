@@ -9,6 +9,7 @@ import os
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
+from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -184,18 +185,26 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
     '''
     Test data with pca option for dimension reduction
     '''
+    target_names = ['class 0', 'class 1']
     if pca:
-        # Test trained svm model and print accuracy
-        error = model.predict(pca_model.transform(X_test)) - Y_test
-        accuracy = len(error[error == 0])/len(error)
-        print("Accuracy of the SVM model with PCA: ",accuracy)
+        # Test trained svm model and print the report    
+        print("Confusion matrix:")
+        print("[[TP,FN], \n[FP, TN]] \n")
+        print(confusion_matrix(Y_test, model.predict(pca_model.transform(X_test))))
+        print("\n")
+        print("Classification report: \n")
+        print(classification_report(Y_test, model.predict(pca_model.transform(X_test)), 
+                                    target_names=target_names))
 
     else:
-        # Test trained svm model and print accuracy
-        error = model.predict(X_test) - Y_test
-        accuracy = len(error[error == 0])/len(error)
-        print("Accuracy of the SVM model: ",accuracy)
-
+        # Test trained svm model and print the report 
+        print("Confusion matrix:")
+        print("[[TP,FN], \n[FP, TN]] \n")
+        print(confusion_matrix(Y_test, model.predict(X_test)))
+        print("\n")
+        print("Classification report: \n")
+        print(classification_report(Y_test, model.predict(X_test), 
+                                    target_names=target_names))
 
 
 
