@@ -205,6 +205,3 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
         print("Classification report: \n")
         print(classification_report(Y_test, model.predict(X_test), 
                                     target_names=target_names))
-
-
-

@@ -50,5 +50,5 @@ if __name__ == "__main__":
     clf = svm.SVC(kernel = "rbf", C = 3, gamma = 0.5)
     clf, pca_model = train_data(clf, X_train, Y_train, pca = pca_flag, n_components = 2)
     
-    # Test trained svm model and print accuracy
+    # Test trained svm model and print the classification report
     test_data(clf, X_test, Y_test, pca = pca_flag, pca_model = pca_model)
