@@ -260,4 +260,28 @@ def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2
     print("\n")
     
     return gr.best_estimator_
+
+def cross_validation(model, X, Y, n_splits = 4, pca = True, n_components = 2):
+
+    '''
+    Cross validation. The main parameter is n_splits, which indicates
+    how many folds we want to divide our dataset into.
+    '''
+    print("Cross validation result with {} folds:".format(n_splits))
+    if pca:
+        # Transform data with pca and feed into the model  
+        pca_model = PCA(n_components = n_components)
+        data = pca_model.fit_transform(X)
+        scores = cross_val_score(model, data, Y, cv=n_splits)
+        print("Scores: ", scores)
+        print("%0.2f accuracy with a standard deviation of %0.3f" % (scores.mean(), scores.std()))
+
+
+    else:
+        # Test trained svm model and print the report 
+        scores = cross_val_score(model, X, Y, cv=n_splits)
+        print("Scores: ", scores)
+        print("%0.2f accuracy with a standard deviation of %0.3f" % (scores.mean(), scores.std()))
+
+    print("\n")
     
