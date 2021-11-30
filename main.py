@@ -13,7 +13,7 @@ if __name__ == "__main__":
     #                 'pcv', 'wc', 'rc', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
     pca_flag = 0 # the trigger for using pca
     normalization = 1 # The trigger for using normalization
-    grid_search = 0 # The trigger for using automated parmeter tunning process
+    grid_search = 1 # The trigger for using automated parmeter tunning process
     
     infile = "data_banknote_authentication.txt"
     feature_list = ["variance","skewness","curtosis","entropy"]
