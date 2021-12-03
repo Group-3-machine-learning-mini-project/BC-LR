@@ -23,7 +23,7 @@ def category2numerical(df):
     df[cat_columns] = df[cat_columns].apply(lambda x: x.cat.codes)
     return df 
 
-def normalize_dataframe(df):
+def normalize_dataframe(df): # Author: Binh Minh NGUYEN
     '''
     Normalize the data. This is often applied with kidney dataset.
     '''
@@ -36,7 +36,7 @@ def normalize_dataframe(df):
     df[num_features] = minmax.fit_transform(df[num_features].values)
     return df
 
-def normalize_data(X, normalization = True):
+def normalize_data(X, normalization = True): # Author: Binh Minh NGUYEN
     '''
     Normalize the data. This is often applied with kidney dataset.
     '''
@@ -45,7 +45,7 @@ def normalize_data(X, normalization = True):
     X = minmax.fit_transform(X)
     return X, minmax
 
-def clean_data(infile):
+def clean_data(infile): # Author: Minh Triet VO
 	"""
 	Replace missing values by average or median values
 	Center and normalize the data
@@ -105,7 +105,7 @@ def clean_data(infile):
 
 
 # Define dataset
-class binary_classification_dataset(torch.utils.data.Dataset):
+class binary_classification_dataset(torch.utils.data.Dataset): # Author: Ganglin TIAN
 	def __init__(self, infile, feature_list):
 		self.dataset_name = os.path.basename(infile).split(".")[0]
 		self.data_dic = clean_data(infile).to_dict('list')
@@ -123,7 +123,7 @@ class binary_classification_dataset(torch.utils.data.Dataset):
 		label = self.data_dic["classification"][idx]
 		return data, label 
 
-def split_data(infile, feature_list, batch_size=32):
+def split_data(infile, feature_list, batch_size=32): # Author: Ganglin TIAN
 	"""
 	Split between training set and test set
 	Split the training set for cross-validation
@@ -157,7 +157,7 @@ def split_data(infile, feature_list, batch_size=32):
 
 	return train_dataset, valid_dataset, test_dataset, train_loader, valid_loader, test_loader
 
-def parsing_data(data):
+def parsing_data(data): # Author: Ganglin TIAN
     '''
     Convert data from dict to array
     '''
@@ -166,7 +166,7 @@ def parsing_data(data):
       new_data.append(data[key])
     return new_data
 
-def read_dataset(train_dataset, valid_dataset, test_dataset):
+def read_dataset(train_dataset, valid_dataset, test_dataset): # Author: Ganglin TIAN
     '''
     Read data from dataset
     So far we do not work with valid_dataset so we ignore it
@@ -188,7 +188,7 @@ def read_dataset(train_dataset, valid_dataset, test_dataset):
     
     return X_train, Y_train, X_test, Y_test
 
-def train_data(model, X_train, Y_train, pca = False, n_components = 4):
+def train_data(model, X_train, Y_train, pca = False, n_components = 4): # Author: Binh Minh NGUYEN
     '''
     Train data with pca option for dimension reduction
     '''
@@ -204,7 +204,7 @@ def train_data(model, X_train, Y_train, pca = False, n_components = 4):
         model.fit(X_train, Y_train)
         return model, None
     
-def test_data(model, X_test, Y_test, pca = True, pca_model = None):
+def test_data(model, X_test, Y_test, pca = True, pca_model = None): # Author: Binh Minh NGUYEN
     '''
     Test data with pca option for dimension reduction
     '''
@@ -230,7 +230,7 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None):
         print(classification_report(Y_test, model.predict(X_test), 
                                     target_names=target_names))
         
-def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2, dataname = "banknote"):
+def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2, dataname = "banknote"): # Author: Binh Minh NGUYEN
     
     '''
     Model selection with grid search
@@ -261,7 +261,7 @@ def model_selection(base_model, X, Y, n_splits = 4, pca = True, n_components = 2
     
     return gr.best_estimator_
 
-def cross_validation(model, X, Y, n_splits = 4, pca = True, n_components = 2):
+def cross_validation(model, X, Y, n_splits = 4, pca = True, n_components = 2): # Author: Binh Minh NGUYEN
 
     '''
     Cross validation. The main parameter is n_splits, which indicates
