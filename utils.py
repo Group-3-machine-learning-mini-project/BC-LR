@@ -96,7 +96,7 @@ def clean_data(infile): # Author: Minh Triet VO
 		df[fillna_most_cols] = df[fillna_most_cols].fillna(df[fillna_most_cols].mode().iloc[0])
 
         # Preprocess: convert category to numerical values
-		df = category2numerical(df)
+		# df = category2numerical(df)
 
 		return df
 
