@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 
-def category2numerical(df):
+def category2numerical(df): # Author: Binh Minh NGUYEN
     '''
     Convert category to numeric value for classification
     '''
