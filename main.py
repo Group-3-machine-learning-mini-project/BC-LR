@@ -8,16 +8,19 @@ from utils import *
 
 
 if __name__ == "__main__":
-    # infile = "kidney_disease.csv"
-    # feature_list = ['age', 'bp', 'sg', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 
-    #                 'pcv', 'wc', 'rc', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
-    pca_flag = 0 # the trigger for using pca
+    infile = "kidney_disease.csv"
+    feature_list = ['age', 'bp', 'sg', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 
+                    'pcv', 'wc', 'rc', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+    
+    # infile = "data_banknote_authentication.txt"
+    # feature_list = ["variance","skewness","curtosis","entropy"]
+    
+    
+    pca_flag = 0# the trigger for using pca
     normalization = 1 # The trigger for using normalization
     grid_search = 1 # The trigger for using automated parmeter tunning process
     
-    infile = "data_banknote_authentication.txt"
-    feature_list = ["variance","skewness","curtosis","entropy"]
-    
+  
     # Loading dataset. The train_loader, valid_loader, test_loader are avaialble
     # in case we want to adapt a neural-network based solution with pytorch framwork.
     # We also include the CLEAN step in this function
@@ -42,15 +45,15 @@ if __name__ == "__main__":
         clf = svm.SVC()
         
         # Applying grid search to find the best parameters
-        best_clf = model_selection(clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2, dataname = infile)
+        best_clf = model_selection(clf, X_train, Y_train, n_splits = 4, pca = pca_flag, n_components = 4, dataname = infile)
     
     else: # Manual tunning with cross validation
-        best_clf = svm.SVC(kernel = "rbf", C = 300, gamma = 0.5)
-        cross_validation(best_clf, X_train, Y_train, n_splits = 5, pca = pca_flag, n_components = 2)
+        best_clf = svm.SVC(kernel = "rbf", C = 1, gamma = 0.1)
+        cross_validation(best_clf, X_train, Y_train, n_splits = 4, pca = pca_flag, n_components = 4)
         
     # Train SVM model with the best model. Depending on the pca trigger,
     # pca_model can contain fitted paramenters or None type.
-    best_clf, pca_model = train_data(best_clf, X_train, Y_train, pca = pca_flag, n_components = 2)
+    best_clf, pca_model = train_data(best_clf, X_train, Y_train, pca = pca_flag, n_components = 3)
 
     # # Test trained svm model and print the classification report
     test_data(best_clf, X_test, Y_test, pca = pca_flag, pca_model = pca_model)

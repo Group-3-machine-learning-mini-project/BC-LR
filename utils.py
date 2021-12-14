@@ -9,7 +9,7 @@ import os
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.model_selection import cross_val_score, GridSearchCV
 import numpy as np
 import matplotlib.pyplot as plt
@@ -96,7 +96,7 @@ def clean_data(infile): # Author: Minh Triet VO
 		df[fillna_most_cols] = df[fillna_most_cols].fillna(df[fillna_most_cols].mode().iloc[0])
 
         # Preprocess: convert category to numerical values
-		# df = category2numerical(df)
+		df = category2numerical(df)
 
 		return df
 
@@ -221,7 +221,7 @@ def test_data(model, X_test, Y_test, pca = True, pca_model = None): # Author: Bi
         print("Classification report: \n")
         print(classification_report(Y_test, model.predict(pca_model.transform(X_test)), 
                                     target_names=target_names))
-
+        return accuracy_score(Y_test, model.predict(pca_model.transform(X_test)))
     else:
         # Test trained svm model and print the report 
         print(confusion_matrix(Y_test, model.predict(X_test)))
