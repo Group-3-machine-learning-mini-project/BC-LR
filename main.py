@@ -45,11 +45,11 @@ if __name__ == "__main__":
         clf = svm.SVC()
         
         # Applying grid search to find the best parameters
-        best_clf = model_selection(clf, X_train, Y_train, n_splits = 4, pca = pca_flag, n_components = 4, dataname = infile)
+        best_clf = model_selection(clf, X_train, Y_train, n_splits = 4, pca = pca_flag, n_components = 3, dataname = infile)
     
     else: # Manual tunning with cross validation
         best_clf = svm.SVC(kernel = "rbf", C = 1, gamma = 0.1)
-        cross_validation(best_clf, X_train, Y_train, n_splits = 4, pca = pca_flag, n_components = 4)
+        cross_validation(best_clf, X_train, Y_train, n_splits = 4, pca = pca_flag, n_components = 3)
         
     # Train SVM model with the best model. Depending on the pca trigger,
     # pca_model can contain fitted paramenters or None type.
